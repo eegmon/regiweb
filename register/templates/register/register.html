@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>회원가입</title>
+</head>
+<body>
+    <h2>회원가입</h2>
+    <form method="POST">
+        {% csrf_token %} <!-- 장고의 보안 필수 태그 -->
+        {{ form.as_p }}  <!-- 우리가 만든 Form을 알아서 줄바꿈 태그(<p>)로 그려줍니다 -->
+        <button type="submit">가입하기</button>
+    </form>
+</body>
+</html>
