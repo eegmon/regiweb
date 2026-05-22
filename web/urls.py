@@ -20,4 +20,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('register.urls')), #register앱의 url을 포함시킴
+    path('guestbook/', include('guestbook.urls'))
 ]
