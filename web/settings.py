@@ -22,10 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-with open(os.path.join(BASE_DIR, "secrets.json")) as f:
-    secrets = json.load(f)
-SECRET_KEY = secrets["SECRET_KEY"]
+# with open(os.path.join(BASE_DIR, "secrets.json")) as f:
+#     secrets = json.load(f)
+# SECRET_KEY = secrets["SECRET_KEY"]
 
+SECRET_KEY = 'django-insecure-&-n5u#q!qxeun&ijswu2ir(gqg_y=f)8o4pxu8_i0l+7h2#iis'
+#개발과정에서만 씁시다
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
