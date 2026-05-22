@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os, json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+
+# with open(os.path.join(BASE_DIR, "secrets.json")) as f:
+#     secrets = json.load(f)
+# SECRET_KEY = secrets["SECRET_KEY"]
+
 SECRET_KEY = 'django-insecure-&-n5u#q!qxeun&ijswu2ir(gqg_y=f)8o4pxu8_i0l+7h2#iis'
+#개발과정에서만 씁시다
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'register',
 ]
 
 MIDDLEWARE = [
@@ -72,10 +80,21 @@ WSGI_APPLICATION = 'web.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "regiweb-database",
+#         "USER": "regiuser",
+#         "PASSWORD": "register00",
+#         "HOST": "127.0.0.1",
+#         "PORT": "5432",
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
