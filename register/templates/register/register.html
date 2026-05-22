@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> 회원가입 </title>
+</head>
+<body>
+<!-- 색이 있는 배경 박스 -->
+<div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #c2e1e4;">
+    
+    <!-- 회원가입 폼이 들어갈 하얀색 카드 박스 -->
+    <div style="width: 100%; max-width: 400px; padding: 30px; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+        
+        <h2 style="text-align: center; margin-bottom: 25px;">회원가입</h2>
+
+    <form method="POST">
+        {% csrf_token %} <!-- 장고의 보안 필수 태그 -->
+        <form method="POST">
+    {% csrf_token %} <!-- 보안을 위한 필수 태그입니다. 절대 지우면 안 돼요! -->
+
+    <!-- 장고가 주는 입력창들을 하나씩 꺼내서 정렬합니다 -->
+    {% for field in form %}
+        <div style="margin-bottom: 15px;">
+            <!-- 항목 이름 (예: 아이디, 비밀번호) -->
+            <label style="display: block; margin-bottom: 5px; font-size: medium; font-weight: bold;">
+                {{ field.label }}
+            </label>
+            
+            <!-- 실제 입력창 (여기에 디자인이 들어갈 공간입니다) -->
+            <div>
+                {{ field }}
+            </div>
+
+            <!-- 혹시 입력이 잘못되었을 때 뜨는 에러 메시지 -->
+            {% if field.errors %}
+                <small style="color: red;">{{ field.errors|striptags }}</small>
+            {% endif %}
+        </div>
+    {% endfor %}
+       </div>
+    
+    <!-- 가입하기 버튼 -->
+    <button type="submit" style="width: 100%; padding: 10px; background-color: #466d96; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        가입하기
+    </button>
+</div>
+
+
+    
+</body>
+</html>
