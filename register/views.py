@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 def signup_view(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
-        if form.is_value(): # 입력한 값이 유효하다면
+        if form.is_valid(): # 입력한 값이 유효하다면
             # 실제 회원 데이터베이스에 저장
             user = User.objects.create_user(
                 username=form.cleaned_data['username'],
