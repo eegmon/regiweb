@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os, json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&-n5u#q!qxeun&ijswu2ir(gqg_y=f)8o4pxu8_i0l+7h2#iis'
+
+with open(os.path.join(BASE_DIR, "secrets.json")) as f:
+    secrets = json.load(f)
+SECRET_KEY = secrets["SECRET_KEY"]
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -75,9 +80,9 @@ WSGI_APPLICATION = 'web.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "mydatabase",
-        "USER": "mydatabaseuser",
-        "PASSWORD": "mypassword",
+        "NAME": "regiweb-database",
+        "USER": "regiuser",
+        "PASSWORD": "register00",
         "HOST": "127.0.0.1",
         "PORT": "5432",
     }
