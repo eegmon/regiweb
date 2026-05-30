@@ -1,1 +1,467 @@
-{ % load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fafafa;
+            color: #333;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #222;
+        }
+
+        /* 카드 공통 스타일 */
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* 입력창 스타일 */
+
+        .SEARCH {
+            width: 89%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+        }
+
+        .HASH {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+        }
+
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+        }
+
+
+
+        /* 버튼 스타일 */
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #0095f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #1877f2;
+        }
+
+        .search-btn {
+            width: 10%;
+            font-size: 12px;
+            background-color: #262626;
+        }
+
+        .search-btn:hover {
+            background-color: #000;
+        }
+
+        /* 갤러리 레이아웃 */
+        .gallery-title {
+            margin: 30px 0 15px 0;
+            font-size: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .clear-search {
+            font-size: 14px;
+            color: #0095f6;
+            cursor: pointer;
+            display: none;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 20px;
+        }
+
+        /* 게시물 카드 스타일 */
+        .post-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .post-img-wrapper {
+            width: 100%;
+            height: 230px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .post-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 게시물 텍스트 정보 구역 */
+        .post-info {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .post-content {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+            margin-bottom: 12px;
+            white-space: pre-wrap;
+            /* 줄바꿈 허용 */
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag {
+            color: #00376b;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .tag:hover {
+            text-decoration: underline;
+        }
+
+        .no-result {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px 0;
+            color: #999;
+        }
+
+        /* 추가 */
+        .post-img-wrapper {
+            overflow: hidden;
+            /* 영역 밖 이미지 숨김 */
+        }
+
+        .post-card img {
+            cursor: pointer;
+            /* 클릭 가능하다는 표시 */
+            /* transition: transform 0.2s; /* 부드러운 확대 효과 */
+        }
+
+        /*.post-card img:hover {
+            transform: scale(1.05); 마우스 올렸을 때 살짝 확대
+        } */
+
+        /* 원본 보기 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            animation: zoomIn 0.3s ease;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.9)
+            }
+
+            to {
+                transform: scale(1)
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .close-modal:hover {
+            color: #bbb;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>📸 레지스터 갤러리</h1>
+
+        <!-- 1. 해시태그 검색 폼 -->
+        <div class="card">
+            <h2>검색</h2>
+            <div class="form-group">
+                <input type="text" id="searchInput" placeholder=" " class="SEARCH">
+                <button class="search-btn" onclick="searchTags()">검색하기</button>
+            </div>
+
+        </div>
+
+        <!-- 2. 게시물 업로드 폼 -->
+        <div class="card">
+            <h2>게시물 올리기</h2>
+            <div class="form-group">
+                <label for="imageInput">사진 선택</label>
+                <input type="file" id="imageInput" accept="image/*">
+            </div>
+            <!-- 글 내용 입력 창 -->
+            <div class="form-group">
+                <label for="contentInput">글 내용</label>
+                <textarea id="contentInput" rows="3" placeholder="사진에 대한 설명을 적어주세요"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="tagInput">해시태그 (띄어쓰기로 구분)</label>
+                <input type="text" id="tagInput" class="HASH">
+            </div>
+            <button onclick="uploadPost()">게시물 등록</button>
+        </div>
+
+        <!-- 3. 게시물 출력 영역 -->
+        <div class="gallery-title">
+            <span id="galleryHeading">모든 게시물</span>
+            <span class="clear-search" id="clearSearchBtn" onclick="resetSearch()">❌ 전체 보기</span>
+        </div>
+        <div class="gallery" id="galleryContainer">
+            <!-- 게시물이 동적으로 추가되는 곳 -->
+        </div>
+
+        <div id="imageModal" class="modal" onclick="closeModal()">
+            <span class="close-modal">&times;</span>
+            <img class="modal-content" id="expandedImg" onclick="event.stopPropagation()">
+        </div>
+    </div>
+
+    <script>
+        // 게시물 데이터 배열
+        let posts = [
+            {
+                id: 1,
+                imgUrl: 'https://i.namu.wiki/i/-DFUwEBRX9bYVmK_IQIsLzenZmaxCShAIw0mzues_krGiXVHHl8C-prIsmzmbYyDO2N8bI_ox71BbaBystK02w.webp',
+                content: '릴리예쁘다',
+                tags: ['#릴리']
+            },
+            {
+                id: 2,
+                imgUrl: 'https://images.gamebanana.com/img/embeddables/Mod_598611_sd_image.jpg?1757626112',
+                content: '낄낄박사',
+                tags: ['#낄낄']
+            }
+        ];
+
+        window.onload = function () {
+            renderPosts(posts);
+        };
+
+        // 1. 게시물 등록 함수
+        function uploadPost() {
+            const imageInput = document.getElementById('imageInput');
+            const contentInput = document.getElementById('contentInput');
+            const tagInput = document.getElementById('tagInput');
+
+            if (!imageInput.files[0]) {
+                alert('사진을 선택해주세요!');
+                return;
+            }
+
+            // 해시태그 정제
+            const rawTags = tagInput.value.trim().split(/\s+/);
+            const processedTags = rawTags.filter(tag => tag !== "").map(tag => {
+                return tag.startsWith('#') ? tag : '#' + tag;
+            });
+
+            // 이미지 파일을 Base64 URL로 변환하여 배열에 저장
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const newPost = {
+                    id: Date.now(),
+                    imgUrl: e.target.result,
+                    content: contentInput.value, // [추가] 작성한 글 내용 저장
+                    tags: processedTags
+                };
+
+                posts.unshift(newPost); // 최신글을 맨 앞으로
+                renderPosts(posts);     // 화면 새로고침
+
+                // 입력창들 초기화
+                imageInput.value = '';
+                contentInput.value = '';
+                tagInput.value = '';
+                resetSearch();
+            };
+            reader.readAsDataURL(imageInput.files[0]);
+        }
+
+        // 2. 해시태그 검색 함수
+        function searchTags() {
+            const searchInput = document.getElementById('searchInput').value.trim();
+            if (!searchInput) {
+                alert('검색어를 입력하세요!');
+                return;
+            }
+
+            const searchKeyword = searchInput.startsWith('#') ? searchInput : '#' + searchInput;
+            const filteredPosts = posts.filter(post => post.tags.includes(searchKeyword));
+
+            document.getElementById('galleryHeading').innerText = `"${searchKeyword}" 검색 결과`;
+            document.getElementById('clearSearchBtn').style.display = 'inline';
+
+            renderPosts(filteredPosts);
+        }
+
+        // 3. 검색 초기화 (전체 보기)
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('galleryHeading').innerText = '모든 게시물';
+            document.getElementById('clearSearchBtn').style.display = 'none';
+            renderPosts(posts);
+        }
+
+        // 4. 화면에 게시물들을 그려주는 함수 (이 부분 덮어쓰기)
+        function renderPosts(postsToRender) {
+            const container = document.getElementById('galleryContainer');
+            container.innerHTML = '';
+
+            if (postsToRender.length === 0) {
+                container.innerHTML = '<div class="no-result">해당하는 게시물이 없습니다. 😥</div>';
+                return;
+            }
+
+            postsToRender.forEach(post => {
+                const card = document.createElement('div');
+                card.className = 'post-card';
+
+                const tagsHtml = post.tags.map(tag => `<span class="tag" onclick="quickSearch('${tag}')">${tag}</span>`).join(' ');
+
+                // img 태그에 onclick="openModal(this.src)" 추가됨
+                card.innerHTML = `
+                <div class="post-img-wrapper">
+                    <img src="${post.imgUrl}" alt="Uploaded Photo" onclick="openModal(this.src)">
+                </div>
+                <div class="post-info">
+                    <p class="post-content">${post.content || '내용 없음'}</p>
+                    <div class="tag-list">${tagsHtml}</div>
+                </div>
+            `;
+                container.appendChild(card);
+            });
+        }
+
+        // 5. 태그 퀵 검색 함수
+        function quickSearch(tag) {
+            document.getElementById('searchInput').value = tag;
+            searchTags();
+        }
+
+        // ================= 추가할 부분: 모달 동작 함수 ================= //
+        function openModal(imgSrc) {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("expandedImg");
+
+            modal.style.display = "block";
+            modalImg.src = imgSrc;
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("imageModal");
+            modal.style.display = "none";
+        }
+
+    </script>
+
+</body>
+
+</html>
