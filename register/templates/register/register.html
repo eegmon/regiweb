@@ -36,11 +36,12 @@
 </div>
 
 <!-- 성공 시 팝업 표시 및 URL 정리 -->
+<script id="signup-success" type="application/json">{% if success %}true{% else %}false{% endif %}</script>
 <script>
     (function(){
-        var success = {{ success|yesno:"true,false" }};
+        var success = document.getElementById('signup-success').textContent.trim() === 'true';
         if (success) {
-            alert('입력이 완료되었습니다');
+            alert('가입이 완료되었습니다');
             // 쿼리 파라미터 제거하여 새로고침 시 알림이 다시 뜨지 않게 함
             if (window.history && window.history.replaceState) {
                 const url = new URL(window.location.href);
