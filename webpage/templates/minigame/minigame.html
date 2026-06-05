@@ -1,1 +1,252 @@
-{ % load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>지뢰찾기</title>
+<style>
+body{
+    font-family:Arial,sans-serif;
+    text-align:center;
+    background:#f4f4f4;
+}
+#info{
+    font-size:20px;
+    margin:15px;
+}
+#board{
+    display:grid;
+    grid-template-columns:repeat(8,45px);
+    gap:2px;
+    justify-content:center;
+}
+.cell{
+    width:45px;
+    height:45px;
+    border:none;
+    background:#bdbdbd;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.open{
+    background:#eee;
+}
+.mine{
+    background:red;
+    color:white;
+}
+</style>
+</head>
+<body>
+
+<h1>💣 지뢰찾기</h1>
+
+<div id="info">
+⏱ <span id="timer">0</span>초
+</div>
+
+<div id="board"></div>
+
+<script>
+const SIZE = 8;
+const MINE_COUNT = 10;
+
+let board = [];
+let firstClick = true;
+let gameOver = false;
+let revealed = 0;
+let timer = 0;
+
+const boardEl = document.getElementById("board");
+const timerEl = document.getElementById("timer");
+
+setInterval(()=>{
+    if(!gameOver){
+        timer++;
+        timerEl.textContent = timer;
+    }
+},1000);
+
+function createGame(){
+
+    board = [];
+    boardEl.innerHTML = "";
+
+    for(let y=0;y<SIZE;y++){
+        board[y] = [];
+
+        for(let x=0;x<SIZE;x++){
+            board[y][x] = {
+                mine:false,
+                count:0,
+                open:false
+            };
+        }
+    }
+
+    let placed = 0;
+
+    while(placed < MINE_COUNT){
+
+        let x = Math.floor(Math.random()*SIZE);
+        let y = Math.floor(Math.random()*SIZE);
+
+        if(!board[y][x].mine){
+            board[y][x].mine = true;
+            placed++;
+        }
+    }
+
+    calcNumbers();
+
+    for(let y=0;y<SIZE;y++){
+        for(let x=0;x<SIZE;x++){
+
+            let btn = document.createElement("button");
+            btn.className = "cell";
+
+            btn.onclick = ()=>openCell(x,y);
+
+            btn.dataset.x = x;
+            btn.dataset.y = y;
+
+            boardEl.appendChild(btn);
+        }
+    }
+}
+
+function calcNumbers(){
+
+    for(let y=0;y<SIZE;y++){
+        for(let x=0;x<SIZE;x++){
+
+            if(board[y][x].mine) continue;
+
+            let count = 0;
+
+            for(let dy=-1;dy<=1;dy++){
+                for(let dx=-1;dx<=1;dx++){
+
+                    let ny = y + dy;
+                    let nx = x + dx;
+
+                    if(
+                        ny>=0 && ny<SIZE &&
+                        nx>=0 && nx<SIZE &&
+                        board[ny][nx].mine
+                    ){
+                        count++;
+                    }
+                }
+            }
+
+            board[y][x].count = count;
+        }
+    }
+}
+
+function makeSafeArea(x,y){
+
+    for(let dy=-1;dy<=1;dy++){
+        for(let dx=-1;dx<=1;dx++){
+
+            let ny = y + dy;
+            let nx = x + dx;
+
+            if(
+                ny>=0 && ny<SIZE &&
+                nx>=0 && nx<SIZE &&
+                board[ny][nx].mine
+            ){
+
+                board[ny][nx].mine = false;
+
+                while(true){
+
+                    let ry = Math.floor(Math.random()*SIZE);
+                    let rx = Math.floor(Math.random()*SIZE);
+
+                    if(
+                        !board[ry][rx].mine &&
+                        Math.abs(rx-x) > 1 &&
+                        Math.abs(ry-y) > 1
+                    ){
+                        board[ry][rx].mine = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    calcNumbers();
+}
+
+function openCell(x,y){
+
+    if(gameOver) return;
+
+    if(firstClick){
+        firstClick = false;
+        makeSafeArea(x,y);
+    }
+
+    let cell = board[y][x];
+
+    if(cell.open) return;
+
+    cell.open = true;
+    revealed++;
+
+    let btn = document.querySelector(
+        `[data-x="${x}"][data-y="${y}"]`
+    );
+
+    btn.classList.add("open");
+
+    if(cell.mine){
+
+        btn.textContent = "💣";
+        btn.classList.add("mine");
+
+        gameOver = true;
+
+        alert("게임 오버!");
+        return;
+    }
+
+    if(cell.count > 0){
+
+        btn.textContent = cell.count;
+
+    }else{
+
+        for(let dy=-1;dy<=1;dy++){
+            for(let dx=-1;dx<=1;dx++){
+
+                let ny = y + dy;
+                let nx = x + dx;
+
+                if(
+                    ny>=0 && ny<SIZE &&
+                    nx>=0 && nx<SIZE
+                ){
+                    openCell(nx,ny);
+                }
+            }
+        }
+    }
+
+    if(revealed === SIZE*SIZE - MINE_COUNT){
+
+        gameOver = true;
+
+        alert(`🎉 승리!\n기록: ${timer}초`);
+    }
+}
+
+createGame();
+</script>
+
+</body>
+</html>
