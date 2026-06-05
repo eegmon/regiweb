@@ -6,3 +6,6 @@ def privacy_policy_view(request):
 
 def minigame_view(request):
     return render(request, 'minigame/minigame.html')
+
+def main_view(request):
+    return render(request, 'main/main.html')
