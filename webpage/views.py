@@ -3,3 +3,9 @@ from django.shortcuts import render
 # Create your views here.
 def privacy_policy_view(request):
     return render(request, 'privacy_policy/privacy_policy.html')
+
+def minigame_view(request):
+    return render(request, 'minigame/minigame.html')
+
+def main_view(request):
+    return render(request, 'main/main.html')
