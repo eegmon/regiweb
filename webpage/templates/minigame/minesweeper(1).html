@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💣 지뢰찾기</title>
+<style>
+body{font-family:Arial,sans-serif;text-align:center;background:#f4f4f4;margin:0;padding:20px}
+#info{font-size:20px;font-weight:bold;margin:10px}
+#board{display:grid;grid-template-columns:repeat(8,45px);gap:2px;justify-content:center;margin:15px auto}
+.cell{width:45px;height:45px;border:none;background:#bdbdbd;font-size:20px;font-weight:bold;cursor:pointer;transition:.15s}
+.cell:not(.open):not(.flag):hover{background:#aaa}
+.open{background:#eee;cursor:default}
+.mine{background:#f44336;color:#fff}.flag{background:#9c27b0;color:#fff}
+.n1{color:#1976d2}.n2{color:#388e3c}.n3{color:#d32f2f}.n4{color:#512da8}.n5{color:#795548}.n6{color:#0097a7}.n7{color:#000}.n8{color:#777}
+</style>
+</head>
+<body>
+<h1>💣 지뢰찾기</h1>
+<div id="info">⏱ <span id="timer">0</span>초 &nbsp; 💣 남은 지뢰: <span id="mineCount">10</span></div>
+<div id="board"></div>
+<button onclick="createGame()">🔄 다시 시작</button>
+<script>
+const SIZE=8,MINE_COUNT=10;
+let board=[],firstClick=true,gameOver=false,revealed=0,timer=0,timerInterval=null;
+const boardEl=document.getElementById("board"),timerEl=document.getElementById("timer"),mineEl=document.getElementById("mineCount");
+const DIR=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+function startTimer(){clearInterval(timerInterval);timerInterval=setInterval(()=>{if(!gameOver)timerEl.textContent=++timer;},1000);}
+function createGame(){clearInterval(timerInterval);board=[];boardEl.innerHTML="";firstClick=true;gameOver=false;revealed=0;timer=0;timerEl.textContent="0";mineEl.textContent=MINE_COUNT;const f=document.createDocumentFragment();for(let y=0;y<SIZE;y++){board[y]=[];for(let x=0;x<SIZE;x++){const b=document.createElement("button");b.className="cell";board[y][x]={mine:false,count:0,open:false,flag:false,element:b};b.onclick=()=>openCell(x,y);b.oncontextmenu=e=>{e.preventDefault();toggleFlag(x,y)};f.appendChild(b);}}boardEl.appendChild(f);}
+function placeMines(sx,sy){let p=0;while(p<MINE_COUNT){let x=Math.floor(Math.random()*SIZE),y=Math.floor(Math.random()*SIZE);if(Math.abs(x-sx)<=1&&Math.abs(y-sy)<=1)continue;if(!board[y][x].mine){board[y][x].mine=true;p++;}}calcNumbers();}
+function calcNumbers(){for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){if(board[y][x].mine)continue;let c=0;for(const[dY,dX]of DIR){let ny=y+dY,nx=x+dX;if(ny>=0&&ny<SIZE&&nx>=0&&nx<SIZE&&board[ny][nx].mine)c++;}board[y][x].count=c;}}
+function openCell(sx,sy){if(gameOver)return;if(firstClick){firstClick=false;placeMines(sx,sy);startTimer();}const st=[[sx,sy]];while(st.length){const[x,y]=st.pop(),cell=board[y][x];if(cell.open||cell.flag)continue;cell.open=true;revealed++;cell.element.classList.add("open");if(cell.mine){cell.element.textContent="💣";cell.element.classList.add("mine");return endGame(false);}if(cell.count){cell.element.textContent=cell.count;cell.element.classList.add("n"+cell.count);}else for(const[dY,dX]of DIR){let ny=y+dY,nx=x+dX;if(ny>=0&&ny<SIZE&&nx>=0&&nx<SIZE){let n=board[ny][nx];if(!n.open&&!n.flag)st.push([nx,ny]);}}}if(revealed===SIZE*SIZE-MINE_COUNT)endGame(true);}
+function toggleFlag(x,y){if(gameOver)return;const c=board[y][x];if(c.open)return;c.flag=!c.flag;c.element.textContent=c.flag?"🚩":"";c.element.classList.toggle("flag",c.flag);let flags=0;for(const r of board)for(const k of r)if(k.flag)flags++;mineEl.textContent=MINE_COUNT-flags;}
+function endGame(win){gameOver=true;clearInterval(timerInterval);for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++)if(board[y][x].mine){board[y][x].element.textContent=win?"🚩":"💣";board[y][x].element.classList.add(win?"flag":"mine");}
+if(win){let best=localStorage.getItem("best");if(best===null||timer<Number(best)){localStorage.setItem("best",timer);alert("🎉 승리!\n최고기록 갱신: "+timer+"초");}else alert("🎉 승리!\n기록: "+timer+"초\n최고기록: "+best+"초");}
+else alert("💥 게임 오버!");}
+createGame();
+</script>
+</body>
+</html>
