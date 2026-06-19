@@ -22,7 +22,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('register.urls')), #register앱의 url을 포함시킴
-    path('guestbook/', include('guestbook.urls'))
+    path('guestbook/', include('guestbook.urls')),
     path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
     path('gallery/', include('gallery.urls')),
     path('', include('webpage.urls')), #webpage앱의 url을 포함시킴

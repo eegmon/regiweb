@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-{ % load static % }
+{% load static %}
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>레지스터 | 학교 코딩 동아리</title>
-    <link rel="stylesheet" href="{ % static 'css/styles.css' % }" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
   </head>
   <body>
+    <div class="top-auth-links" style="display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px 0;">
+      <a href="{% url 'login' %}" class="button link-button">로그인</a>
+      <a href="{% url 'signup' %}" class="button link-button">회원가입</a>
+    </div>
+
     <header class="hero" id="home">
       <div class="container hero-content">
         <p class="eyebrow">학교 코딩 동아리</p>
@@ -71,14 +76,14 @@
       <div class="container">
         <h2>바로가기</h2>
         <div class="link-grid">
-          <a href="main.html" class="button link-button">메인 페이지 + 급식</a>
-          <a href="mini-entry.html" class="button link-button">미니 엔트리</a>
-          <a href="mini-game2.html" class="button link-button">미니 게임 2</a>
-          <a href="warning.html" class="button link-button">경고 페이지</a>
-          <a href="guestbook.html" class="button link-button">방명록 · Q&amp;A</a>
-          <a href="gallery.html" class="button link-button">활동 갤러리</a>
-          <a href="signup.html" class="button link-button">회원 가입</a>
-          <a href="members.html" class="button link-button">임원 소개</a>
+          <a href="{% url 'main' %}" class="button link-button">메인 페이지 + 급식</a>
+          <a href="{% url 'introduce' %}" class="button link-button">동아리 소개</a>
+          <!-- <a href="{% url 'introduce' %}" class="button link-button">미니 엔트리</a> -->
+          <a href="{% url 'minigame' %}" class="button link-button">미니 게임 2</a>
+          <a href="{% url 'guestbook' %}" class="button link-button">방명록 · Q&amp;A</a>
+          <a href="{% url 'gallery_page' %}" class="button link-button">활동 갤러리</a>
+          <a href="{% url 'signup' %}" class="button link-button">회원 가입</a>
+          <a href="{% url 'calendar' %}" class="button link-button">임원 소개</a>
         </div>
       </div>
     </section>
@@ -86,6 +91,7 @@
     <footer class="footer">
       <div class="container footer-content">
         <p>레지스터 | 학교 코딩 동아리</p>
+        <p><a href="{% url 'privacy_policy' %}" style="font-weight: bold;">개인정보처리방침</a></p>
       </div>
     </footer>
   </body>

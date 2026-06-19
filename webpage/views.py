@@ -7,5 +7,11 @@ def privacy_policy_view(request):
 def minigame_view(request):
     return render(request, 'minigame/minigame.html')
 
+def introduce_view(request):
+    return render(request, 'introduce/index.html')
+
+def calendar_view(request):
+    return render(request, 'calendar/calendar.html')
+
 def main_view(request):
     return render(request, 'main/main.html')
