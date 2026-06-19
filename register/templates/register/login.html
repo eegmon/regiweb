@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>로그인</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+           .page-wrap { display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh; background-color:#c2e1e4; gap:20px; padding:20px; }
+        .card { width:100%; max-width:400px; padding:30px; background-color:#fff; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.12); }
+        .submit-btn { width:100%; max-width:400px; padding:12px; background-color:#466d96; color:#fff; border:none; border-radius:5px; cursor:pointer; }
+        .field { margin-bottom:15px; }
+        .error { color: red; font-size:0.9em; }
+    </style>
+</head>
+<body>
+
+<div class="page-wrap">
+    <div class="card">
+        <h2 style="text-align:center; margin-bottom:20px;">로그인</h2>
+
+        <form method="post" id="login-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="error">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="field">
+                    <label style="display:block; margin-bottom:6px; font-weight:bold;">{{ field.label }}</label>
+                    <div>{{ field }}</div>
+                    {% if field.errors %}
+                        <div class="error">{{ field.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+        </form>
+    </div>
+
+    <button class="submit-btn" onclick="document.getElementById('login-form').submit()">로그인</button>
+
+    <div style="max-width:400px; text-align:center; color:#444;">
+        계정이 없으신가요? <a href="{% url 'signup' %}">회원가입</a>
+    </div>
+</div>
+
+</body>
+</html>
