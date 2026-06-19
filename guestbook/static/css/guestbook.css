@@ -1,0 +1,119 @@
+/* 기본 배경 및 폰트 설정 */
+body {
+    background-color: #f4f7f6;
+    font-family: 'Pretendard', sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 50px;
+}
+
+.guestbook-container {
+    width: 100%;
+    max-width: 700px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+/* 글쓰기 영역 스타일링 */
+.write-box {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.write-box textarea {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    height: 100px;
+    resize: none;
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+.write-box button {
+    align-self: flex-end;
+    background-color: #4A90E2;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* 게시글 리스트 스타일링 */
+.post {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.nickname {
+    font-weight: bold;
+    color: #4A90E2;
+}
+
+.date {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.content {
+    line-height: 1.6;
+    color: #444;
+}
+
+/* 통계 및 하단 버튼 */
+.post-footer {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #f9f9f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.stats span {
+    margin-right: 10px;
+}
+
+.comment-btn {
+    background: none;
+    border: 1px solid #ddd;
+    padding: 5px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+/* 제목 */
+.title{
+    cursor:pointer;
+    font-weight:bold;
+    font-size:18px;
+    margin-bottom:10px;
+}
+
+/* 내용 */
+.content{
+    margin-top:10px;
+    line-height:1.5;
+}
