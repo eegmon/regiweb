@@ -326,28 +326,38 @@
     </div>
 
     <script>
-        // 게시물 데이터 배열
-        let posts = [
-            {
-                id: 1,
-                imgUrl: 'https://i.namu.wiki/i/-DFUwEBRX9bYVmK_IQIsLzenZmaxCShAIw0mzues_krGiXVHHl8C-prIsmzmbYyDO2N8bI_ox71BbaBystK02w.webp',
-                content: '릴리예쁘다',
-                tags: ['#릴리']
-            },
-            {
-                id: 2,
-                imgUrl: 'https://images.gamebanana.com/img/embeddables/Mod_598611_sd_image.jpg?1757626112',
-                content: '낄낄박사',
-                tags: ['#낄낄']
-            }
-        ];
+        let posts = [];
 
         window.onload = function () {
-            renderPosts(posts);
+            loadPosts();
         };
 
-        // 1. 게시물 등록 함수
-        function uploadPost() {
+        function getCookie(name) {
+            const cookieValue = `; ${document.cookie}`;
+            const parts = cookieValue.split(`; ${name}=`);
+            if (parts.length === 2) {
+                return parts.pop().split(';').shift();
+            }
+            return null;
+        }
+
+        async function loadPosts() {
+            try {
+                const response = await fetch('/gallery/api/posts/');
+                if (!response.ok) {
+                    throw new Error('게시물 목록 로드 실패');
+                }
+
+                const data = await response.json();
+                posts = data.posts || [];
+                renderPosts(posts);
+            } catch (error) {
+                alert('게시물을 불러오지 못했습니다.');
+                console.error(error);
+            }
+        }
+
+        async function uploadPost() {
             const imageInput = document.getElementById('imageInput');
             const contentInput = document.getElementById('contentInput');
             const tagInput = document.getElementById('tagInput');
@@ -357,35 +367,38 @@
                 return;
             }
 
-            // 해시태그 정제
-            const rawTags = tagInput.value.trim().split(/\s+/);
-            const processedTags = rawTags.filter(tag => tag !== "").map(tag => {
-                return tag.startsWith('#') ? tag : '#' + tag;
-            });
+            const formData = new FormData();
+            formData.append('image', imageInput.files[0]);
+            formData.append('content', contentInput.value.trim());
+            formData.append('tags', tagInput.value.trim());
 
-            // 이미지 파일을 Base64 URL로 변환하여 배열에 저장
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const newPost = {
-                    id: Date.now(),
-                    imgUrl: e.target.result,
-                    content: contentInput.value, // [추가] 작성한 글 내용 저장
-                    tags: processedTags
-                };
+            try {
+                const response = await fetch('/gallery/api/posts/create/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken') || ''
+                    },
+                    body: formData
+                });
 
-                posts.unshift(newPost); // 최신글을 맨 앞으로
-                renderPosts(posts);     // 화면 새로고침
+                const result = await response.json();
 
-                // 입력창들 초기화
+                if (!response.ok) {
+                    throw new Error(result.error || '게시물 등록 실패');
+                }
+
+                posts.unshift(result);
+                resetSearch();
+
                 imageInput.value = '';
                 contentInput.value = '';
                 tagInput.value = '';
-                resetSearch();
-            };
-            reader.readAsDataURL(imageInput.files[0]);
+            } catch (error) {
+                alert(error.message);
+                console.error(error);
+            }
         }
 
-        // 2. 해시태그 검색 함수
         function searchTags() {
             const searchInput = document.getElementById('searchInput').value.trim();
             if (!searchInput) {
@@ -398,11 +411,9 @@
 
             document.getElementById('galleryHeading').innerText = `"${searchKeyword}" 검색 결과`;
             document.getElementById('clearSearchBtn').style.display = 'inline';
-
             renderPosts(filteredPosts);
         }
 
-        // 3. 검색 초기화 (전체 보기)
         function resetSearch() {
             document.getElementById('searchInput').value = '';
             document.getElementById('galleryHeading').innerText = '모든 게시물';
@@ -410,7 +421,14 @@
             renderPosts(posts);
         }
 
-        // 4. 화면에 게시물들을 그려주는 함수 (이 부분 덮어쓰기)
+        function escapeHtml(text) {
+            return String(text || '').replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
         function renderPosts(postsToRender) {
             const container = document.getElementById('galleryContainer');
             container.innerHTML = '';
@@ -424,15 +442,14 @@
                 const card = document.createElement('div');
                 card.className = 'post-card';
 
-                const tagsHtml = post.tags.map(tag => `<span class="tag" onclick="quickSearch('${tag}')">${tag}</span>`).join(' ');
+                const tagsHtml = (post.tags || []).map(tag => `<span class="tag" onclick="quickSearch('${escapeHtml(tag)}')">${escapeHtml(tag)}</span>`).join(' ');
 
-                // img 태그에 onclick="openModal(this.src)" 추가됨
                 card.innerHTML = `
                 <div class="post-img-wrapper">
-                    <img src="${post.imgUrl}" alt="Uploaded Photo" onclick="openModal(this.src)">
+                    <img src="${escapeHtml(post.imgUrl)}" alt="Uploaded Photo" onclick="openModal(this.src)">
                 </div>
                 <div class="post-info">
-                    <p class="post-content">${post.content || '내용 없음'}</p>
+                    <p class="post-content">${escapeHtml(post.content) || '내용 없음'}</p>
                     <div class="tag-list">${tagsHtml}</div>
                 </div>
             `;
@@ -440,26 +457,23 @@
             });
         }
 
-        // 5. 태그 퀵 검색 함수
         function quickSearch(tag) {
             document.getElementById('searchInput').value = tag;
             searchTags();
         }
 
-        // ================= 추가할 부분: 모달 동작 함수 ================= //
         function openModal(imgSrc) {
-            const modal = document.getElementById("imageModal");
-            const modalImg = document.getElementById("expandedImg");
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('expandedImg');
 
-            modal.style.display = "block";
+            modal.style.display = 'block';
             modalImg.src = imgSrc;
         }
 
         function closeModal() {
-            const modal = document.getElementById("imageModal");
-            modal.style.display = "none";
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
         }
-
     </script>
 
 </body>
