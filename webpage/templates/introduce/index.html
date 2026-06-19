@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>전자공학 탐구부 레지스터</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "맑은 고딕", sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e3a8a);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 420px;
+}
+
+.title {
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+    font-size: 32px;
+}
+
+.card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    margin-bottom: 15px;
+}
+
+.header {
+    padding: 18px 20px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.3s;
+}
+
+.header:hover {
+    background: #1d4ed8;
+}
+
+.arrow {
+    transition: transform 0.4s ease;
+}
+
+.content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+}
+
+.content ul {
+    list-style: none;
+    padding: 15px 20px;
+}
+
+.content li {
+    padding: 12px;
+    margin: 8px 0;
+    background: #eff6ff;
+    border-left: 4px solid #2563eb;
+    border-radius: 8px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+.content.show li {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.footer {
+    text-align: center;
+    margin-top: 15px;
+    color: rgba(255,255,255,0.8);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1 class="title">⚡️전자공학 탐구부 레지스터</h1>
+
+    <!-- 동아리 소개 -->
+    <div class="card">
+        <div class="header" onclick="toggleIntro()">
+            📖 동아리 소개
+            <span class="arrow" id="introArrow">▼</span>
+        </div>
+
+        <div class="content" id="introContent">
+            <ul>
+                <li>전자공학을 탐구하고 활동하는 동아리입니다.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 부원 명단 -->
+    <div class="card">
+        <div class="header" onclick="toggleMembers()">
+            📁 레지스터 부원
+            <span class="arrow" id="memberArrow">▼</span>
+        </div>
+
+        <div class="content" id="memberContent">
+            <ul>
+                <li>한종범</li>
+                <li>전지성</li>
+                <li>전예진</li>
+                <li>오서진</li>
+                <li>윤서준</li>
+                <li>장도현</li>
+                <li>차산이</li>
+                <li>현호</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        Electronic Engineering
+    </div>
+
+</div>
+
+<script>
+function toggleIntro() {
+    const content = document.getElementById("introContent");
+    const arrow = document.getElementById("introArrow");
+
+    if (content.style.maxHeight) {
+        content.style.maxHeight = null;
+        content.classList.remove("show");
+        arrow.style.transform = "rotate(0deg)";
+    } else {
+        content.style.maxHeight = content.scrollHeight + "px";
+        content.classList.add("show");
+        arrow.style.transform = "rotate(180deg)";
+    }
+}
+
+function toggleMembers() {
+    const content = document.getElementById("memberContent");
+    const arrow = document.getElementById("memberArrow");
+
+    if (content.style.maxHeight) {
+        content.style.maxHeight = null;
+        content.classList.remove("show");
+        arrow.style.transform = "rotate(0deg)";
+    } else {
+        content.style.maxHeight = content.scrollHeight + "px";
+        content.classList.add("show");
+        arrow.style.transform = "rotate(180deg)";
+    }
+}
+</script>
+
+</body>
+</html>

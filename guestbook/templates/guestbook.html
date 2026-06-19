@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>레지스터 방명록</title>
+    <link rel="stylesheet" href="{% static 'css/guestbook.css' %}">
+</head>
+
+<body>
+
+    <div class="guestbook-container">
+
+        <h1>레지스터 방명록</h1>
+
+        <!-- 글쓰기 -->
+        <section class="write-box">
+            <form method="post">
+                {% csrf_token %}
+                {% if user.is_authenticated %}
+                <input type="text" value="{{ user.username }}" maxlength="30" disabled>
+                <input type="hidden" name="nickname" value="{{ user.username }}">
+                {% else %}
+                <input type="text" name="nickname" placeholder="닉네임" maxlength="30">
+                {% endif %}
+                <textarea name="content" placeholder="게시글을 적어주세요."></textarea>
+
+                <button type="submit">
+                    등록하기
+                </button>
+            </form>
+        </section>
+
+        <!-- 게시글 리스트 -->
+        <section class="post-list">
+            {% for entry in entries %}
+            <article class="post">
+                <div class="post-header">
+                    <span class="nickname">{{ entry.nickname }}</span>
+                    <span class="date">{{ entry.created_at|date:"Y.m.d" }}</span>
+                </div>
+
+                <details>
+                    <summary class="title">
+                        📌 {{ entry.content|truncatechars:10 }}
+                    </summary>
+
+                    <p class="content">
+                        {{ entry.content|linebreaksbr }}
+                    </p>
+                </details>
+
+                {% if user.is_authenticated %}
+                    {% if entry.author_id == user.id or user.is_staff %}
+                    <div class="post-actions">
+                        <button type="button" class="action-btn edit-btn" onclick="editEntry({{ entry.id }}, '{{ entry.content|escapejs }}')">수정</button>
+                        <form method="post" class="inline-form" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="entry_id" value="{{ entry.id }}">
+                            <button type="submit" class="action-btn delete-btn">삭제</button>
+                        </form>
+                    </div>
+                    <form method="post" id="edit-form-{{ entry.id }}" class="hidden-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="edit">
+                        <input type="hidden" name="entry_id" value="{{ entry.id }}">
+                        <input type="hidden" name="content" id="edit-content-{{ entry.id }}">
+                    </form>
+                    {% endif %}
+                {% endif %}
+            </article>
+            {% empty %}
+            <article class="post">
+                <p class="content">아직 작성된 게시글이 없습니다.</p>
+            </article>
+            {% endfor %}
+        </section>
+
+    </div>
+
+    <script>
+        function editEntry(entryId, currentContent) {
+            const nextContent = prompt('수정할 내용을 입력하세요.', currentContent);
+
+            if (nextContent === null) {
+                return;
+            }
+
+            const trimmedContent = nextContent.trim();
+
+            if (!trimmedContent) {
+                alert('내용을 입력해주세요!');
+                return;
+            }
+
+            const contentField = document.getElementById(`edit-content-${entryId}`);
+            const form = document.getElementById(`edit-form-${entryId}`);
+
+            contentField.value = trimmedContent;
+            form.submit();
+        }
+    </script>
+
+</body>
+</html>
