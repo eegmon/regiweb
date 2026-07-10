@@ -1,1 +1,84 @@
-{ % load static %}
+import json
+import os
+
+FILE_NAME = "club_schedule.json"
+
+# 파일 불러오기
+def load_schedule():
+if os.path.exists(FILE_NAME):
+with open(FILE_NAME, "r", encoding="utf-8") as f:
+return json.load(f)
+return []
+
+# 파일 저장
+def save_schedule(schedule):
+with open(FILE_NAME, "w", encoding="utf-8") as f:
+json.dump(schedule, f, ensure_ascii=False, indent=4)
+
+# 일정 추가
+def add_schedule(schedule):
+date = input("날짜 (YYYY-MM-DD): ")
+time = input("시간 (HH:MM): ")
+title = input("행사명: ")
+place = input("장소: ")
+leader = input("담당자: ")
+
+schedule.append({
+"date": date,
+"time": time,
+"title": title,
+"place": place,
+"leader": leader
+})
+
+save_schedule(schedule)
+print("✅ 일정이 등록되었습니다.")
+
+# 일정 조회
+def view_schedule(schedule):
+if not schedule:
+print("등록된 일정이 없습니다.")
+return
+
+print("\n====== 동아리 일정 ======")
+for i, item in enumerate(schedule, start=1):
+print(f"""
+[{i}]
+날짜 : {item['date']}
+시간 : {item['time']}
+행사 : {item['title']}
+장소 : {item['place']}
+담당 : {item['leader']}
+--------------------------
+""")
+
+# 일정 수정
+def edit_schedule(schedule):
+view_schedule(schedule)
+if not schedule:
+return
+
+num = int(input("수정할 번호: ")) - 1
+
+if 0 <= num < len(schedule): schedule[num]["date"]=input("새 날짜: ")
+        schedule[num][" time"]=input("새 시간: ")
+        schedule[num][" title"]=input("새 행사명: ")
+        schedule[num][" place"]=input("새 장소: ")
+        schedule[num][" leader"]=input("새 담당자: ")
+
+        save_schedule(schedule)
+        print(" ✅ 수정 완료") else: print("번호가 잘못되었습니다.") # 일정 삭제 def delete_schedule(schedule): view_schedule(schedule) if
+    not schedule: return num=int(input("삭제할 번호: ")) - 1
+
+    if 0 <= num < len(schedule):
+        del schedule[num]
+        save_schedule(schedule)
+        print(" 🗑 삭제되었습니다.") else: print("번호가 잘못되었습니다.") # 메인 프로그램 def main(): schedule=load_schedule() while True:
+    print("""========================동아리 일정 관리 시스템========================1. 일정 등록 2. 일정 조회 3. 일정 수정 4. 일정 삭제 5.
+    종료========================""")
+
+        menu = input(" 메뉴 선택: ")
+
+        if menu == " 1": add_schedule(schedule) elif menu=="2" : view_schedule(schedule) elif menu=="3" :
+    edit_schedule(schedule) elif menu=="4" : delete_schedule(schedule) elif menu=="5" : print("프로그램을 종료합니다.") break
+    else: print("올바른 메뉴를 선택하세요.") if __name__=="__main__" : main()
