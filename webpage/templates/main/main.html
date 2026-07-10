@@ -168,6 +168,18 @@
     </script>
     {% endif %}
 
+    <div class="popup-overlay" id="popup-meal" aria-hidden="true">
+      <div class="popup-card" role="dialog" aria-modal="true" aria-labelledby="popup-meal-title">
+        <div class="popup-card__header">
+          <h2 id="popup-meal-title">오늘의 급식 🍱</h2>
+          <button type="button" class="popup-card__close" id="popup-meal-close" aria-label="팝업 닫기">×</button>
+        </div>
+        <div class="popup-card__body" id="popup-meal-body" style="text-align: center; font-size: 1.1rem; padding-top: 30px; padding-bottom: 30px;">
+          급식 정보를 불러오는 중입니다...
+        </div>
+      </div>
+    </div>
+
     <div class="top-auth-links" style="display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px 0;">
       <a href="{% url 'main' %}" class="button link-button">메인 페이지</a>
       <a href="{% url 'login' %}" class="button link-button">로그인</a>
@@ -237,9 +249,10 @@
       <div class="container">
         <h2>바로가기</h2>
         <div class="link-grid">
-          <a href="{% url 'main' %}" class="button link-button">메인 페이지 + 급식</a>
+          <a href="{% url 'main' %}" class="button link-button">동아리 메인</a>
+          <button type="button" class="button link-button" id="open-meal-popup" style="cursor: pointer; text-align: center;">오늘의 급식 보기</button>
+          
           <a href="{% url 'introduce' %}" class="button link-button">동아리 소개</a>
-          <!-- <a href="{% url 'introduce' %}" class="button link-button">미니 엔트리</a> -->
           <a href="{% url 'minigame' %}" class="button link-button">미니 게임 2</a>
           <a href="{% url 'guestbook' %}" class="button link-button">방명록 · Q&amp;A</a>
           <a href="{% url 'gallery_page' %}" class="button link-button">활동 갤러리</a>
@@ -255,5 +268,68 @@
         <p><a href="{% url 'privacy_policy' %}" style="font-weight: bold;">개인정보처리방침</a></p>
       </div>
     </footer>
+
+    <script>
+      (function () {
+        var mealPopup = document.getElementById('popup-meal');
+        var openMealBtn = document.getElementById('open-meal-popup');
+        var closeMealBtn = document.getElementById('popup-meal-close');
+        var mealBody = document.getElementById('popup-meal-body');
+
+        if (!mealPopup || !openMealBtn || !closeMealBtn || !mealBody) return;
+
+        function closeMealPopup() {
+          mealPopup.classList.remove('is-visible');
+          mealPopup.setAttribute('aria-hidden', 'true');
+        }
+
+        closeMealBtn.addEventListener('click', closeMealPopup);
+        mealPopup.addEventListener('click', function (e) {
+          if (e.target === mealPopup) closeMealPopup();
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') closeMealPopup();
+        });
+
+        openMealBtn.addEventListener('click', function () {
+          mealPopup.classList.add('is-visible');
+          mealPopup.setAttribute('aria-hidden', 'false');
+          mealBody.innerHTML = '🔄 급식 정보를 불러오는 중입니다...';
+
+          var today = new Date();
+          var yyyy = today.getFullYear();
+          var mm = String(today.getMonth() + 1).padStart(2, '0');
+          var dd = String(today.getDate()).padStart(2, '0');
+          var ymd = yyyy + mm + dd;
+
+          var apiKey = ''; 
+          var apiUrl = `https://open.neis.go.kr/open/api/hub/mealServiceDietInfo?Type=json&pIndex=1&pSize=10&ATPT_OFCDC_SC_CODE=J10&SD_SCHUL_CODE=7530851&MLSV_YMD=${ymd}&KEY=${apiKey}`;
+
+          fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+              if (data.mealServiceDietInfo) {
+                var row = data.mealServiceDietInfo[1].row[0];
+                var dish = row.DDISH_NM;
+                
+                // 알레르기 유발 식재료 번호 및 불필요한 공백 정제
+                dish = dish.replace(/\([^)]*\)/g, '').replace(/<br\/>/g, '\n').trim();
+                var kcal = row.CAL_INFO;
+
+                mealBody.innerHTML = `<div style="font-weight:700; color:#0f172a; margin-bottom:12px; font-size:1.2rem;">[${row.MMEAL_SC_NM}]</div>` + 
+                                     `<div style="line-height:1.8; color:#334155; margin-bottom:18px; white-space:pre-wrap;">${dish}</div>` + 
+                                     `<div style="font-size:0.9rem; color:#64748b; background:#f1f5f9; display:inline-block; padding:4px 12px; border-radius:999px;">🔥 총 칼로리: ${kcal}</div>`;
+              } else {
+                mealBody.innerHTML = '🍱 오늘은 급식 정보가 없거나 주말/공휴일입니다.';
+              }
+            })
+            .catch(error => {
+              console.error('급식 API 에러:', error);
+              mealBody.innerHTML = '❌ 급식 정보를 원활하게 가져오지 못했습니다. 네트워크를 확인해 주세요.';
+            });
+        });
+      })();
+    </script>
   </body>
 </html>
+
