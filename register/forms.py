@@ -5,6 +5,7 @@ class SignUpForm(forms.ModelForm):
     # 비밀번호 입력창과 비밀번호 확인창을 만듭니다.
     password = forms.CharField(widget=forms.PasswordInput, label="비밀번호")
     password_check = forms.CharField(widget=forms.PasswordInput, label="비밀번호 확인")
+    terms = forms.BooleanField(required=True, label="이용약관에 동의합니다.")
 
     class Meta:
         model = User
@@ -18,3 +19,8 @@ class SignUpForm(forms.ModelForm):
 
         if password != password_check:
             self.add_error('password_check', "비밀번호가 일치하지 않습니다.")
+
+        if not cleaned_data.get("terms"):
+            self.add_error('terms', "이용약관에 동의해야 가입할 수 있습니다.")
+
+        return cleaned_data
