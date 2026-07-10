@@ -1,1 +1,100 @@
 {% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+</head>
+
+<body>
+
+    <div id="calendar"></div>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+
+                initialView: 'dayGridMonth',
+
+                locale: 'ko',
+
+                selectable: true,
+
+                events: '/events/',
+
+                select: function (info) {
+
+                    let title = prompt("일정 이름");
+
+                    if (title) {
+
+                        fetch("/add/", {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRFToken": getCookie("csrftoken")
+                            },
+
+                            body: JSON.stringify({
+
+                                title: title,
+                                start: info.startStr,
+                                end: info.endStr
+
+                            })
+
+                        }).then(() => calendar.refetchEvents());
+
+                    }
+
+                }
+
+            });
+
+            calendar.render();
+
+        });
+
+        function getCookie(name) {
+
+            let cookieValue = null;
+
+            if (document.cookie && document.cookie !== '') {
+
+                const cookies = document.cookie.split(';');
+
+                for (let i = 0; i < cookies.length; i++) {
+
+                    const cookie = cookies[i].trim();
+
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+
+                        break;
+
+                    }
+
+                }
+
+            }
+
+            return cookieValue;
+
+        }
+
+    </script>
+
+</body>
+
+</html>
