@@ -151,3 +151,125 @@ h1 {
     margin-top:10px;
     line-height:1.5;
 }
+
+/* ==========================================
+   [추가] 독립된 새 글 작성 페이지 (write.html) 스타일
+   ========================================== */
+
+/* 전체 레이아웃 컨테이너 리스타일링 */
+.container {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* 상단 헤더 영역 스타일 */
+.board-header {
+    border-bottom: 2px solid #333;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+}
+
+.board-header h1 {
+    text-align: left; /* 기존 가운데 정렬을 정돈된 왼쪽 정렬로 변경 */
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+/* 개별 입력 폼 그룹 (작성자, 제목, 내용 공통) */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+/* 제목 입력창 및 작성자 안내창 공통 디자인 */
+.form-group input[type="text"],
+.form-group textarea {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px 15px;
+    font-size: 1rem;
+    font-family: 'Pretendard', sans-serif;
+    background-color: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* 포커스 시 부드러운 푸른색 테두리 효과 */
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+/* 로그인 유저용 읽기 전용(readonly) 작성자 인풋 스타일 */
+.form-group .readonly-input {
+    background-color: #eee; /* 비활성화 느낌의 배경 */
+    color: #666;
+    border: 1px solid #ccc;
+    cursor: not-allowed;
+}
+
+/* 본문 텍스트 영역 상세 설정 */
+.form-group textarea {
+    resize: vertical; /* 위아래로만 크기 조절 허용 */
+    min-height: 250px; /* rows="12"에 맞춘 넉넉한 높이 */
+    line-height: 1.6;
+}
+
+/* 하단 버튼 배치 구역 */
+.button-group {
+    display: flex;
+    justify-content: flex-end; /* 오른쪽 정렬 */
+    gap: 12px;                  /* 버튼 사이 간격 */
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+/* 취소 버튼 스타일 (기존 edit-btn의 톤앤매너 활용) */
+.button-group .cancel-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e5f0ff;
+    color: #2457a6;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 25px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    text-decoration: none; /* a 태그 밑줄 제거 */
+    transition: background 0.2s ease;
+}
+
+.button-group .cancel-btn:hover {
+    background-color: #d2e5ff;
+}
+
+/* 등록 버튼 스타일 (기존 write-box button의 디자인 확장) */
+.button-group .submit-btn {
+    background-color: #4A90E2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 30px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background 0.2s ease;
+}
+
+.button-group .submit-btn:hover {
+    background-color: #357ABD;
+}
