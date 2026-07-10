@@ -6,9 +6,170 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>레지스터 | 학교 코딩 동아리</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <style>
+      .popup-overlay {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: rgba(15, 23, 42, 0.55);
+        z-index: 2000;
+      }
+
+      .popup-overlay.is-visible {
+        display: flex;
+      }
+
+      .popup-card {
+        width: min(92vw, 520px);
+        max-height: min(80vh, 720px);
+        overflow: auto;
+        border-radius: 18px;
+        background: #ffffff;
+        box-shadow: 0 24px 80px rgba(15, 23, 42, 0.35);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+      }
+
+      .popup-card__header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 22px 24px 14px;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .popup-card__header h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        line-height: 1.3;
+      }
+
+      .popup-card__close {
+        appearance: none;
+        border: 0;
+        background: #e5e7eb;
+        color: #0f172a;
+        border-radius: 999px;
+        width: 38px;
+        height: 38px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        line-height: 1;
+      }
+
+      .popup-card__body {
+        padding: 22px 24px 28px;
+        white-space: pre-wrap;
+        line-height: 1.7;
+        color: #1f2937;
+      }
+
+      .popup-card__image {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .popup-card__actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .popup-card__action {
+        appearance: none;
+        border: 1px solid #cbd5e1;
+        background: #f8fafc;
+        color: #0f172a;
+        border-radius: 999px;
+        padding: 10px 14px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .popup-card__action--primary {
+        background: #0f172a;
+        color: #fff;
+        border-color: #0f172a;
+      }
+    </style>
   </head>
   <body>
+    {% if popup_notice %}
+    <div class="popup-overlay" id="popup-notice" aria-hidden="true">
+      <div class="popup-card" role="dialog" aria-modal="true" aria-labelledby="popup-notice-title">
+        {% if popup_notice.image_url %}
+        <img class="popup-card__image" src="{{ popup_notice.image_url }}" alt="{{ popup_notice.title }}" />
+        {% endif %}
+        <div class="popup-card__header">
+          <h2 id="popup-notice-title">{{ popup_notice.title }}</h2>
+          <button type="button" class="popup-card__close" id="popup-notice-close" aria-label="공지 닫기">×</button>
+        </div>
+        <div class="popup-card__body">
+          {{ popup_notice.content|linebreaksbr }}
+          <div class="popup-card__actions">
+            <button type="button" class="popup-card__action popup-card__action--primary" id="popup-notice-hide-today">오늘 하루 보지 않기</button>
+            <button type="button" class="popup-card__action" id="popup-notice-close-secondary">닫기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var popup = document.getElementById('popup-notice');
+        var closeButton = document.getElementById('popup-notice-close');
+        var hideTodayButton = document.getElementById('popup-notice-hide-today');
+        var closeSecondaryButton = document.getElementById('popup-notice-close-secondary');
+        var storageKey = 'popup-notice-{{ popup_notice.id }}-{{ popup_notice.updated_at|date:"YmdHis" }}';
+        var todayKey = storageKey + '-today';
+        var todayStamp = new Date().toISOString().slice(0, 10);
+        var todayValue = todayStamp + ':dismissed';
+
+        if (!popup || !closeButton || !hideTodayButton || !closeSecondaryButton) {
+          return;
+        }
+
+        if (window.localStorage.getItem(storageKey) === 'dismissed' || window.localStorage.getItem(todayKey) === todayValue) {
+          return;
+        }
+
+        popup.classList.add('is-visible');
+        popup.setAttribute('aria-hidden', 'false');
+
+        function closePopup() {
+          popup.classList.remove('is-visible');
+          popup.setAttribute('aria-hidden', 'true');
+        }
+
+        function hideForToday() {
+          closePopup();
+          window.localStorage.setItem(todayKey, todayValue);
+        }
+
+        closeButton.addEventListener('click', closePopup);
+        closeSecondaryButton.addEventListener('click', closePopup);
+        hideTodayButton.addEventListener('click', hideForToday);
+        popup.addEventListener('click', function (event) {
+          if (event.target === popup) {
+            closePopup();
+          }
+        });
+        document.addEventListener('keydown', function (event) {
+          if (event.key === 'Escape') {
+            closePopup();
+          }
+        });
+      })();
+    </script>
+    {% endif %}
+
     <div class="top-auth-links" style="display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px 0;">
+      <a href="{% url 'main' %}" class="button link-button">메인 페이지</a>
       <a href="{% url 'login' %}" class="button link-button">로그인</a>
       <a href="{% url 'signup' %}" class="button link-button">회원가입</a>
     </div>

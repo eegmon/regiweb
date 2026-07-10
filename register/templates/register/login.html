@@ -5,6 +5,23 @@
     <title>로그인</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+        .main-page-link {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 20;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #0f172a;
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
            .page-wrap { display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh; background-color:#c2e1e4; gap:20px; padding:20px; }
         .card { width:100%; max-width:400px; padding:30px; background-color:#fff; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.12); }
         .submit-btn { width:100%; max-width:400px; padding:12px; background-color:#466d96; color:#fff; border:none; border-radius:5px; cursor:pointer; }
@@ -13,6 +30,8 @@
     </style>
 </head>
 <body>
+
+<a href="{% url 'main' %}" class="main-page-link">메인 페이지</a>
 
 <div class="page-wrap">
     <div class="card">
