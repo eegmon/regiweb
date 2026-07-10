@@ -3,8 +3,27 @@
 <head>
     <meta charset="utf-8">
     <title>회원가입</title>
+    <style>
+        .main-page-link {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 20;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #0f172a;
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+    </style>
 </head>
 <body>
+<a href="{% url 'main' %}" class="main-page-link">메인 페이지</a>
 <!-- 색이 있는 배경 박스 -->
 <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #c2e1e4;">
     <!-- 회원가입 폼이 들어갈 하얀색 카드 박스 -->
@@ -54,7 +73,86 @@
                     <small style="color: red;">{{ form.password_check.errors|striptags }}</small>
                 {% endif %}
             </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: medium;">
+                    {{ form.terms }}
+                    <span>{{ form.terms.label }}</span>
+                </label>
+                {% if form.terms.errors %}
+                    <small style="color: red;">{{ form.terms.errors|striptags }}</small>
+                {% endif %}
 
+                <!-- 약관 슬라이딩 박스 토글 버튼 -->
+                <button type="button" id="toggle-terms" style="margin-top:10px; padding:6px 10px; background:#eee; border:1px solid #ccc; border-radius:4px; cursor:pointer;">약관 보기</button>
+
+                <!-- 슬라이딩 약관 내용 -->
+                <div id="terms-box" style="max-height:0; overflow:hidden; transition: max-height 0.35s ease; background:#f9f9f9; padding:0 12px; border-radius:6px; margin-top:8px; border:1px solid #e0e0e0;">
+                    <div style="padding:12px 0;">
+                        <!-- 실제 약관 내용을 여기에 넣으세요 -->
+                        <p style="margin:0 0 8px 0; font-size:14px; line-height:1.5;">홈페이지의 이용에 대해 감사드리며, 홈페이지의 이용약관에 대하여 설명을 드리겠습니다.
+
+제1장 총칙
+제1조 (목적)
+본 약관은 신한고등학교 레지스터에서 운영하는(이하" 레지스터")에서 운영하는 동아리 웹(이하 "사이트")에서 제공하는 서비스(이하 "서비스")의 가입조건 및 이용에 관한 제반 사항및, 이용자와 사이트의 권리, 의무, 책임 사항과 기타 필요한 사항을 규정함을 목적으로 합니다.
+
+제2조(용어의 정의)
+① 본 약관에서 사용하는 용어의 정의는 다음과 같습니다.
+1. '회원'이라 함은 이 약관에 동의하고 서비스를 이용하는 이용자를 말합니다.
+2. '이용계약'이라 함은 이 약관을 포함하여 서비스 이용과 관련하여 레지스터와 회원 간에 체결하는 모든 계약을 말합니다. 
+3. '가입'이라 함은 레지스터 사이트가 제공하는 신청서 양식에 해당 정보를 기입하고, 본 약관에 동의하여 서비스 이용 계약을 완료시키는 행위를 말합니다.
+4.'회원ID'라 함은 회원의 식별 및 서비스 이용을 위하여 회원의 신청에 따라 레지스터가 회원별로 부여하는 고유한 문자와 숫자의 조합을 말합니다.
+5.'비밀번호'라 함은 회원ID로 식별되는 회원의 본인 여부를 검증하기 위하여 회원이 설정하여 레지스터에 등록한 고유의 문자와 숫자의 조합을 말합니다.
+6. '단말기'라 함은 서비스에 접속하기 위해 회원이 이용하는 개인용 컴퓨터, PDA, 휴대전화 등의 전산장치를 말합니다.
+7. '탈퇴'란 회원이 이용계약을 종료시크는 행위를 말합니다.
+(2) 이 약관에서 사용하는 용어 중 제1항에서 정하지 아니한 것은 관계 법령 및 서비스별 안내에서 정하는 바에 따르며, 그 외에는 일반 관례에 따릅니다.
+
+제3조(이용약관의 효력 및 변경)
+(1) 이 약관은 서비스를 통해 온라인으로 공시하고 회원의 동의와 레지스터의 승낙으로 효력을 발생하며, 합리적인 사유가 발생할 경우 레지스터는 관련 법령에 위배되지 않는 범위안에서 본 약관을 개정할 수 있습니다. 개정된 약관은 정당한 절차에 따라 서비스를 통해 공지함으로써 효력을 발휘합니다.
+(2) 회원은 정기적으로 서비스를 방문하여 약관의 변경사항을 확인하여야 합니다. 변경된 약관에 대한 정보를 알지 못해 발생하는 회원의 피해는 레지스터에서 책임지지 않습니다.
+(3) 회원은 변경된 약관에 동의하지 않을 경우 회원 탈퇴를 요청할 수 있습니다.
+
+제4조(약관외 준칙)
+레지스터는 필요한 경우 서비스 내의 개별항목에 대하여 개별약관 또는 운영원칙(이하'서비스별 안내'라 한다)를 정할 수 있으며, 이 약관과 서비스별 안내의 내용이 상충되는 경우에는 서비스별 안내의 내용을 우선하여 적용합니다.
+
+제2장 이용계약 체결
+제5조(이용 계약의 성립)
+(1) 이용계약은 이용자의 이용계약 내용에 대한 동의와 이용신청에 대하여 레지스터의 이용승낙으로 성립합니다.
+(2) 이용계약에 대한 동의는 이용신청 당시 신청서 상의 '동의함'버튼을 누름으로써 의사 표시를합니다.
+
+제6조(서비스 이용 신청)
+(1) 회원으로 가입하여 서비스를 이용하고자 하는 이용자는 레지스터가 요청하는 제반 정보 (회원ID, 비밀번호, 이름, 연락처 등)를 제공하여야 합니다.
+(2) 모든 회원은 반드시 회원 본인의 정보를 제공하여야만 서비스를 이용할 수 있으며, 타인의 정보를 도용하거나 허위의 정보를 등록하는 등 본인의 진정한 정보를 등록하지 않은 회원은 서비스 이용과 관련하여 아무런 권리를 주장할 수 없으며, 관계 법령에 따라 처벌 받을 수 있습니다.
+(3) 회원가입은 반드시 본인의 진정한 정보를 통하여만 가입할 수 있으며 레지스터는 회원이 등록한 정보에 대하여 확인조치를 할 수 있습니다. 회원은 레지스터의 확인조치에 대하여 적극 협력하여야 하며, 만일 이를 준수하지 아니할 경우 공단은 회원이 등록한 정보가 부정한 것으로 처리할 수 있습니다.
+(4) 레지스터는 회원에 대하여 등급별로 구분하여 이용시간, 이용회수, 서비스 메뉴 등을 세분하여 이용에 차등을 둘 수 있습니다.
+
+제7조(개인정보의 보호 및 사용)
+(1)레지스터는 '개인정보보호법' 등 관계 법령이 정하는 바에 따라 회원의 개인정보를 보호하기 위해 노력합니다.
+개인정보의 보호 및 이용에 대해서는 관련법 및 레지스터의 개인정보처리방침이 적용됩니다. 다만, 레지스터의 공식 사이트 이외의 링크된 사이트에서는 레지스터의 개인정보처리방침이 적용되지 않습니다.
+(2)회원은 개인정보관리화면을 통하여 언제든지 본인의 개인정보를 열람하고 수정할 수 있습니다.
+(3)회원은 회원가입 신청 시 기재한 사항이 변경되었을 경우 온라인으로 수정할 수 있습니다.
+(4)제3항의 변경사랑을 위원회에 알리지 않아 발생한 불이익에 대하여 레지스터에 알리지 않아 발생한 불이익에 대하여 레지스터는 책임지지 않습니다.
+
+제 8조 이용제한 등
+
+ 
+
+① 레지스터는 회원이 이 약관의 의무를 위반하거나 서비스의 정상적인 운영을 방해한 경우, 경고, 일시정지, 영구이용정지 등으로 서비스 이용을 단계적으로 제한할 수 있습니다.
+② 레지스터는 전항에도 불구하고, 타인의 명의(이름 및 이메일주소 등)도용 및 결제도용, 저작권법 및 컴퓨터프로그램보호법을 위반한 불법프로그램의 제공 및 운영방해, 정보통신망법을 위반한 불법통신 및 해킹, 악성프로그램의 배포, 접속권한 초과행위 등과 같이 관련법을 위반한 경우에는 즉시 영구이용정지를 할 수 있습니다. 본 항에 따른 영구이용정지 시 서비스 이용을 통해 획득한 쿠폰 및 기타 혜택 등도 모두 소멸되며, 회사는 이에 대해 별도로 보상하지 않습니다.
+③ 레지스터는 회원이 계속해서 3개월 이상 로그인하지 않는 경우, 회원정보의 보호 및 운영의 효율성을 위해 이용을 제한할 수 있습니다.
+④ 레지스터는 본 조의 이용제한 범위 내에서 제한의 조건 및 세부내용은 이용제한정책 및 개별 서비스상의 운영정책에서 정하는 바에 의합니다.
+⑤ 본 조에 따라 서비스 이용을 제한하거나 계약을 해지하는 경우에는 레지스터는 회원에게 즉시 홈페이지를 통해 통지합니다.
+⑥ 회원은 본 조에 따른 이용제한 등에 대해 레지스터가 정한 절차에 따라 이의신청을 할 수 있습니다. 이 때 이의가 정당하다고 레지스터가 인정하는 경우 레지스터는 즉시 서비스의 이용을 재개합니다.
+ 
+
+제 9조 책임제한
+① 레지스터는 천재지변 또는 이에 준하는 불가항력으로 인하여 서비스를 제공할 수 없는 경우에는 서비스 제공에 관한 책임이 면제됩니다.
+② 레지스터는 회원의 귀책사유로 인한 서비스 이용의 장애에 대하여는 책임을 지지 않습니다.
+③ 레지스터는 회원이 서비스와 관련하여 게재한 정보, 자료, 사실의 신뢰도, 정확성 등의 내용에 관하여는 책임을 지지 않습니다.
+④ 레지스터는 회원 간 또는 회원과 제3자 상호간에 서비스를 매개로 하여 거래 등을 한 경우에는 책임이 면제됩니다.
+⑤ 레지스터는 무료로 제공되는 서비스 이용과 관련하여 관련법에 특별한 규정이 없는 한 책임을 지지 않습니다.</p>
+                    </div>
+                </div>
+            </div>
             <!-- 가입하기 버튼 -->
             <button type="submit" style="width: 100%; margin-top: 20px; padding: 10px; background-color: #466d96; color: white; border: none; border-radius: 5px; cursor: pointer;">
                 가입하기
@@ -68,10 +166,28 @@
 <script>
     (function(){
         var form = document.getElementById('signup-form');
+        var toggleTermsButton = document.getElementById('toggle-terms');
+        var termsBox = document.getElementById('terms-box');
         var username = form.elements['username'];
         var email = form.elements['email'];
         var password = form.elements['password'];
         var passwordCheck = form.elements['password_check'];
+
+        if (toggleTermsButton && termsBox) {
+            toggleTermsButton.addEventListener('click', function () {
+                var isOpen = termsBox.style.maxHeight && termsBox.style.maxHeight !== '0px';
+
+                if (isOpen) {
+                    termsBox.style.maxHeight = '0';
+                    toggleTermsButton.textContent = '약관 보기';
+                    toggleTermsButton.setAttribute('aria-expanded', 'false');
+                } else {
+                    termsBox.style.maxHeight = termsBox.scrollHeight + 'px';
+                    toggleTermsButton.textContent = '약관 닫기';
+                    toggleTermsButton.setAttribute('aria-expanded', 'true');
+                }
+            });
+        }
 
         function moveToNext(event, currentField, nextField) {
             currentField.addEventListener('keydown', function(e) {

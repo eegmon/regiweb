@@ -6,9 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>개인정보 처리방침</title>
     <link rel="stylesheet" href="/static/css/privacy_policy.css">
+    <style>
+        .main-page-link {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 20;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #0f172a;
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+    </style>
 </html>
 
 <body>
+    <a href="{% url 'main' %}" class="main-page-link">메인 페이지</a>
     <header>
         <h1>레지스터 웹사이트 개인정보 처리방침</h1>
         <p>신한고등학교 레지스터 동아리 웹 사이트(이하 '동아리 웹')는 정보주체의 자유와 권리 보호를 위해 「개인정보 보호법」 및 관계 법령이 정한 바를 준수하여, 적법하게 개인정보를 처리하고 안전하게 관리하고 있습니다. 이에 「개인정보 보호법」 제30조에 따라 정보주체에게 개인정보의 처리와 보호에 관한 절차 및 기준을 안내하고, 이와 관련한 고충을 신속하고 원할하게 처리할 수 있도록 하기 위하여 다음과 같이 개인정보 처리방침을 수립·공개합니다.
